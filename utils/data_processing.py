@@ -4,7 +4,7 @@ import os
 import ast
 import geopandas 
 from shapely.geometry import Point, Polygon
-
+import matplotlib.pyplot as plt
 
 ##############
 ## OVERPASS ##
@@ -155,6 +155,26 @@ def geopandas_points_to_poly(points_df, crs={'init': u'epsg:4167'}):
                         .reset_index())
     poly_osmdf_clean = geopandas.GeoDataFrame(poly_osmdf_clean, crs=crs)
     return poly_osmdf_clean
+
+
+##############
+## PLOTTING ##
+##############
+
+def plot_unit_residential(res_df, unit_df,
+                          name,  boundary_column ='AU2013_V1_00_NAME'): 
+    """
+    Plot OSM residential area polygons and StatsNZ boundaries
+    on shared X and Y axes for comparison of boundary limits.
+    """
+    
+    f, ax = plt.subplots(2, sharex=True, sharey=True,figsize=(10, 6))
+    res = res_df[res_df[boundary_column] == name].reset_index()
+    res.plot(ax=ax[0])
+
+    stat_unit = unit_df[unit_df[boundary_column] == name].reset_index()
+    stat_unit.plot(ax=ax[1])
+    return
 
 
 ###############
