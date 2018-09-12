@@ -84,7 +84,10 @@ def get_osm_data(compactOverpassQLstring, osm_bbox, osm_objects):
             else:
                 pass
         osm_df = pd.DataFrame(osmdata)
-        osm_df.to_csv(osm_filename, header=True, index=False, encoding='utf-8')
+
+        # Weird truncation with long ways. Getting ',...]' at the end!
+        # Removing csv write until I can fix this. 
+        # osm_df.to_csv(osm_filename, header=True, index=False, encoding='utf-8')
         
     return osm_df
 
@@ -97,7 +100,7 @@ def convert_list_string(list_string):
     u'[a, b, b]' --> ['a', 'b', 'c']
     Needed to expand the nodes columns in ways 
     """
-    list_unicode_strig =  unicode(list_string, "utf-8")
+    list_unicode_string =  unicode(list_string, "utf-8")
     return ast.literal_eval(list_unicode_string)
 
 
@@ -111,14 +114,19 @@ def extend_ways_to_node_view(osmdf):
     
     osmdf_ways = osmdf.query('type == "way"')[['id', 'nodes', 'type']]
     osmdf_nodes = osmdf.query('type == "node"')[['id', 'lat', 'lon']]
-
+    osmdf_ways['nodes'] = osmdf_ways['nodes'].astype(str)
+    osmdf_ways['nodes'] = osmdf_ways['nodes'].apply(convert_list_string)
+    
     osmdf_ways_clean = (osmdf_ways
                         .set_index(['id', 'type'])['nodes']
                         .apply(pd.Series)
                         .stack()
                         .reset_index())
-    
+
     osmdf_ways_clean.columns = ['way_id', 'type', 'sample_num', 'nodes']
+    # osmdf_nodes['id'] = osmdf_nodes['id'].astype(str)
+    # osmdf_ways_clean['nodes'] = osmdf_ways_clean['nodes'].astype(str) 
+    
     osmdf_clean = pd.merge(osmdf_ways_clean,
                            osmdf_nodes,
                            left_on='nodes',
