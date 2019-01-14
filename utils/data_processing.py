@@ -177,6 +177,92 @@ def plot_unit_residential(res_df, unit_df,
     return
 
 
+def plot_linz_residential_buildings(area_unit_df, bldgs_df, residences_df,
+                                    area_unit_name):
+    """
+    Plot triplet of spatial area unit boundary, building and residential polygons
+    for a given SA2 unit
+    """
+
+    # Area Unit
+    ax1 = plt.subplot(131)
+    (area_unit_df
+    .query('AU2013_V1_00_NAME == @area_unit_name')
+    .plot(ax=ax1, color='k', alpha=0.3))
+    ax1.set_aspect("equal")
+    ax1.set_title('Spatial Area Unit Boundary');
+
+    # LINZ building polygons in area unit
+    ax2 = plt.subplot(132, sharex=ax1, sharey=ax1)
+    (bldgs_df
+    .query('AU2013_V1_00_NAME == @area_unit_name')
+    .plot(ax=ax2, color='g', alpha=0.3))
+    ax2.set_aspect("equal")
+    ax2.set_title('Buildings');
+
+    # LINZ residential polygons in area unit
+    ax3 = plt.subplot(133, sharex=ax1, sharey=ax1)
+    (residences_df
+    .query('AU2013_V1_00_NAME == @area_unit_name')
+    .plot(ax=ax3,  color='r', alpha=0.3))
+    ax3.set_aspect("equal")
+    ax3.set_title('Residential Areas');
+
+    return
+
+
+def plot_all(area_unit_df, bldgs_df, residences_df, parks_df,
+            area_unit_name):
+    """
+    Plot triplet of spatial area unit boundary, building and residential polygons
+    for a given SA2 unit
+    """
+
+    # Area Unit
+    ax1 = plt.subplot(141)
+    (area_unit_df
+    .query('AU2013_V1_00_NAME == @area_unit_name')
+    .plot(ax=ax1, color='k', alpha=0.3))
+    ax1.set_aspect("equal")
+    ax1.set_title('Spatial Area Unit Boundary');
+
+    # LINZ building polygons in area unit
+    ax2 = plt.subplot(142, sharex=ax1, sharey=ax1)
+    (bldgs_df
+    .query('AU2013_V1_00_NAME == @area_unit_name')
+    .plot(ax=ax2, color='y', alpha=0.3))
+    ax2.set_aspect("equal")
+    ax2.set_title('Buildings');
+
+    # LINZ residential polygons in area unit
+    ax3 = plt.subplot(143, sharex=ax1, sharey=ax1)
+    (residences_df
+    .query('AU2013_V1_00_NAME == @area_unit_name')
+    .plot(ax=ax3,  color='r', alpha=0.3))
+    ax3.set_aspect("equal")
+    ax3.set_title('Residential Areas');
+
+    # Parks in area unit
+    ax4 = plt.subplot(144, sharex=ax1, sharey=ax1)
+    (parks_df
+    .query('AU2013_V1_00_NAME == @area_unit_name')
+    .plot(ax=ax4,  color='g', alpha=0.3))
+    ax4.set_aspect("equal")
+    ax4.set_title('Council parks');
+
+    return
+
+
+def pretty_ticks(num_xticks, num_yticks):
+    """
+    Adjusting the tick markers to make plot less cluttered / easier to read
+    """
+
+    ax = plt.gca()
+    ax.xaxis.set_major_locator(plt.MaxNLocator(num_xticks))
+    ax.yaxis.set_major_locator(plt.MaxNLocator(num_yticks))
+    return
+
 ###############
 ## NOMINATIM ##
 ###############
